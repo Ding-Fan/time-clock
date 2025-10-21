@@ -1,7 +1,5 @@
 @import 'tailwindcss';
 @import '@fontsource/fira-mono';
-@plugin '@tailwindcss/forms';
-@plugin '@tailwindcss/typography';
 
 :root {
 	--font-body:
@@ -29,6 +27,9 @@ body {
 	background-image:
 		radial-gradient(50% 50% at 50% 50%, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0) 100%),
 		linear-gradient(180deg, var(--color-bg-0) 0%, var(--color-bg-1) 15%, var(--color-bg-2) 50%);
+	display: flex;
+	justify-content: center;
+	align-items: stretch;
 }
 
 h1,
@@ -51,8 +52,9 @@ a:hover {
 }
 
 h1 {
-	font-size: 2rem;
+	font-size: 1.5rem;
 	text-align: center;
+	margin: 0;
 }
 
 h2 {
@@ -70,15 +72,6 @@ pre {
 	color: var(--color-text);
 }
 
-.text-column {
-	display: flex;
-	max-width: 48rem;
-	flex: 0.6;
-	flex-direction: column;
-	justify-content: center;
-	margin: 0 auto;
-}
-
 input,
 button {
 	font-size: inherit;
@@ -91,7 +84,7 @@ button:focus:not(:focus-visible) {
 
 @media (min-width: 720px) {
 	h1 {
-		font-size: 2.4rem;
+		font-size: 1.75rem;
 	}
 }
 
