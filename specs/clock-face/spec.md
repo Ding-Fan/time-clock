@@ -68,9 +68,9 @@ Render clock face with hands rotated, brightness applied, progress overlay
 └─────────────────────────────────┘
 
 Visual States:
-- Past (completed): White background + FULL gray overlay + dim (35% opacity)
+- Past (completed): White background + FULL gray overlay (normal opacity)
 - Current (in progress): White background + PARTIAL gray overlay (filling) + shake animation
-- Future (not started): White background + NO gray overlay
+- Future (not started): White background + NO gray overlay (normal opacity)
 
 Design Elements:
 - Border: 20% rounded rectangle (not circle) with thick white border
@@ -86,7 +86,7 @@ Design Elements:
 User views current hour clock showing live time with animated second hand. Gray overlay fills clockwise from 12 o'clock as the hour progresses. Hour hand progresses smoothly through the hour based on minutes/seconds, minute hand updates per minute, second hand ticks discretely.
 
 **US-2: Show Past Hour State**
-User views completed hour clock with white background fully covered by gray overlay (100% progress), dimmed to 35% opacity, hands frozen at end position (e.g., 09:00 clock shows 10:00). No second hand displayed. Visual metaphor: "filled in/done".
+User views completed hour clock with white background fully covered by gray overlay (100% progress) at normal opacity, hands frozen at end position (e.g., 09:00 clock shows 10:00). No second hand displayed. Visual metaphor: "filled in/done".
 
 **US-3: Show Future Hour State**
 User views upcoming hour clock at normal brightness with clean white background (no gray overlay), hour hand pointing to the start of that hour (e.g., 3 PM clock shows hour hand at 3), minute and second hands at 12:00. No second hand displayed. Visual metaphor: "ready/waiting for its time".
@@ -96,7 +96,7 @@ User views upcoming hour clock at normal brightness with clean white background 
 **Included**:
 
 - Hand rotation via CSS custom properties
-- Brightness states (normal, dim)
+- Brightness prop (currently unused, all clocks at normal opacity)
 - Conditional second hand rendering
 - Progress visualization (conic gradient 0-360°)
 - White background with 3D border effect
@@ -164,8 +164,9 @@ User views upcoming hour clock at normal brightness with clean white background 
 
 **Brightness States**:
 
-- Normal: `opacity: 1.0`
-- Dim: `opacity: 0.35`
+- All clocks maintain normal opacity (1.0)
+- Brightness prop exists for backward compatibility but is not currently used
+- Visual distinction provided by progress overlay, not opacity dimming
 
 **Progress Visualization**:
 
@@ -218,7 +219,7 @@ User views upcoming hour clock at normal brightness with clean white background 
 - [ ] Accepts `handAngles` and rotates all three hands correctly with -90deg offset
 - [ ] Hands point correctly: 0° input = 12 o'clock (top), 90° input = 3 o'clock (right)
 - [ ] Cumulative rotation prevents flicker at second hand :00 transition
-- [ ] Brightness prop toggles between normal and dim opacity (35%)
+- [ ] Brightness prop exists but currently unused (all clocks at normal opacity)
 - [ ] showSecondHand conditionally renders second hand (both actual and shadow)
 - [ ] Progress value generates conic gradient from 0-360 degrees starting at 12 o'clock
 - [ ] Progress values outside 0-1 range are clamped
@@ -228,7 +229,7 @@ User views upcoming hour clock at normal brightness with clean white background 
 
 - [ ] Clock maintains 1:1 aspect ratio at all viewport sizes
 - [ ] All hands have shake animation (0.05s cubic-bezier bounce)
-- [ ] Dim state reduces opacity to 35%
+- [ ] All clocks maintain normal opacity regardless of brightness prop value
 - [ ] Progress overlay visible, accurate, and starts at 12 o'clock
 - [ ] Two-layer center caps visible (big gray 20px, small red 6px)
 - [ ] Small center cap renders on top of all hands (z-index: 10)

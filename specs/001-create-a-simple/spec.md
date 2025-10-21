@@ -9,7 +9,7 @@
 
 ### User Story 1 - Visual Time Awareness at a Glance (Priority: P1)
 
-A user visits the webpage and immediately sees a visual representation of the entire day (00:00 to 23:00) as a grid of 24 circular clocks arranged in a 6×4 matrix. Hours that have already passed in the current day appear dark/dimmed, while the current hour and future hours remain visible/bright. This provides instant awareness of how much of the day has elapsed.
+A user visits the webpage and immediately sees a visual representation of the entire day (00:00 to 23:00) as a grid of 24 circular clocks arranged in a 6×4 matrix. Hours that have already passed in the current day show a full gray overlay, while the current hour shows partial overlay (filling as time progresses) and future hours show no overlay. This provides instant awareness of how much of the day has elapsed.
 
 **Why this priority**: This is the core value proposition - providing an intuitive, visual way to understand time passage throughout the day. Without this, there is no feature.
 
@@ -17,15 +17,15 @@ A user visits the webpage and immediately sees a visual representation of the en
 
 **Acceptance Scenarios**:
 
-1. **Given** it is 14:30 (2:30 PM), **When** user opens the webpage, **Then** clocks for hours 00:00-13:00 (14 clocks) are darkened, and clocks for hours 14:00-23:00 (10 clocks) remain visible/bright
-2. **Given** it is 00:15 (12:15 AM), **When** user opens the webpage, **Then** clock for hour 00:00 is darkened, and all other 23 clocks remain visible
-3. **Given** it is 23:45 (11:45 PM), **When** user opens the webpage, **Then** clocks for hours 00:00-22:00 are darkened, and only the clock for 23:00 remains visible
+1. **Given** it is 14:30 (2:30 PM), **When** user opens the webpage, **Then** clocks for hours 00:00-13:00 (14 clocks) show full gray overlay, clock 14:00 shows partial overlay, and clocks for hours 15:00-23:00 (9 clocks) show no overlay
+2. **Given** it is 00:15 (12:15 AM), **When** user opens the webpage, **Then** clock for hour 00:00 shows partial gray overlay, and all other 23 clocks show no overlay
+3. **Given** it is 23:45 (11:45 PM), **When** user opens the webpage, **Then** clocks for hours 00:00-22:00 show full gray overlay, and clock for 23:00 shows partial gray overlay
 
 ---
 
 ### User Story 2 - Real-Time Day Progress Updates (Priority: P2)
 
-As time progresses while the user has the webpage open, the visualization updates automatically without requiring a page refresh. When a new hour begins, the clock for the previous hour transitions to the darkened state, providing continuous feedback about day progression.
+As time progresses while the user has the webpage open, the visualization updates automatically without requiring a page refresh. When a new hour begins, the clock for the previous hour transitions to show a full gray overlay, providing continuous feedback about day progression.
 
 **Why this priority**: Enhances usability for users who keep the page open throughout the day. Without this, users would need to manually refresh to see updates, reducing the tool's effectiveness as a passive time awareness aid.
 
@@ -33,9 +33,9 @@ As time progresses while the user has the webpage open, the visualization update
 
 **Acceptance Scenarios**:
 
-1. **Given** user opened the page at 09:45 and it is now 10:00, **When** the clock reaches the top of the hour, **Then** the clock for 09:00 transitions to darkened state without page reload
-2. **Given** the webpage has been open for 3 hours, **When** user looks at the display, **Then** exactly 3 additional clocks have become darkened since opening the page
-3. **Given** it is 23:59:50, **When** the clock transitions to midnight (00:00), **Then** all clocks reset to visible state as a new day begins
+1. **Given** user opened the page at 09:45 and it is now 10:00, **When** the clock reaches the top of the hour, **Then** the clock for 09:00 shows full gray overlay without page reload
+2. **Given** the webpage has been open for 3 hours, **When** user looks at the display, **Then** exactly 3 additional clocks show full gray overlay since opening the page
+3. **Given** it is 23:59:50, **When** the clock transitions to midnight (00:00), **Then** all clocks reset to no overlay as a new day begins
 
 ---
 
