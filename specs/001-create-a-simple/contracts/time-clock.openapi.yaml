@@ -1,0 +1,10 @@
+openapi: 3.1.0
+info:
+  title: Time Clock Visualization API (Placeholder)
+  version: 0.0.1
+  description: |
+    The 24-hour visual time clock feature derives all state from the user's local system clock
+    and does not require server-side APIs. This specification remains empty to signal that no
+    backend endpoints are needed for the current scope. Should future requirements introduce
+    synchronized or shared time data, endpoints MUST be defined here.
+paths: {}
