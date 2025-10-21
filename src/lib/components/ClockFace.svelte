@@ -77,7 +77,7 @@
 		border-radius: 50%;
 		background: conic-gradient(
 			from 0deg,
-			var(--clock-progress-fill, rgba(100, 100, 100, 1)) calc(var(--elapsed-angle, 0) * 1deg),
+			rgba(10, 10, 10, .85) calc(var(--elapsed-angle, 0) * 1deg),
 			transparent 0
 		);
 		opacity: clamp(0, calc(var(--elapsed-angle, 0) / 360), 1);
