@@ -89,7 +89,7 @@ User views current hour clock showing live time with animated second hand. Gray 
 User views completed hour clock with white background fully covered by gray overlay (100% progress), dimmed to 35% opacity, hands frozen at end position (e.g., 09:00 clock shows 10:00). No second hand displayed. Visual metaphor: "filled in/done".
 
 **US-3: Show Future Hour State**
-User views upcoming hour clock at normal brightness with clean white background (no gray overlay), all hands pointing to 12:00 position. No second hand displayed. Visual metaphor: "blank/waiting".
+User views upcoming hour clock at normal brightness with clean white background (no gray overlay), hour hand pointing to the start of that hour (e.g., 3 PM clock shows hour hand at 3), minute and second hands at 12:00. No second hand displayed. Visual metaphor: "ready/waiting for its time".
 
 ## MVP Scope
 

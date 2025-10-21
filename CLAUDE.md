@@ -84,7 +84,7 @@ This project implements a real-time clock visualization with the following key c
 - `src/lib/time/clockAngles.ts` - Pure functions calculating clock hand positions
   - `calculateCurrentAngles(date)` - Live analog clock angles with smooth hour hand progression
   - `calculatePastAngles(hourIndex)` - Frozen at end of hour (e.g., 09:00 clock shows 10:00)
-  - `calculateFutureAngles(hourIndex)` - All hands point to 12:00 position
+  - `calculateFutureAngles(hourIndex)` - Hour hand points to start of hour, minute/second at 12:00
 - `src/lib/components/ClockFace.svelte` - Reusable analog clock component
   - Accepts `handAngles`, `brightness`, `showSecondHand`, and `progress` props
   - Uses CSS custom properties (`--hand-rotation`, `--elapsed-angle`) for animations

@@ -17,9 +17,10 @@ const normalize = (degrees: number): number => {
 	return wrapped < 0 ? wrapped + DEGREES_IN_CIRCLE : wrapped;
 };
 
-export const calculateFutureAngles = (): ClockHandAngles => {
+export const calculateFutureAngles = (hourIndex: number): ClockHandAngles => {
+	const hourOnClock = hourIndex % HOURS_IN_CLOCK;
 	return {
-		hour: 0,
+		hour: normalize(hourOnClock * DEGREES_PER_HOUR),
 		minute: 0,
 		second: 0
 	};
@@ -62,7 +63,7 @@ export const resolveAngles = (
 	currentTime: Date
 ): ClockHandAngles => {
 	if (state === 'future') {
-		return calculateFutureAngles();
+		return calculateFutureAngles(hourIndex);
 	}
 	if (state === 'past') {
 		return calculatePastAngles(hourIndex);
