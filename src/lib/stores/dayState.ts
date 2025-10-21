@@ -30,8 +30,7 @@ const determineState = (hourIndex: number, currentHourIndex: number): ClockState
 	return 'current';
 };
 
-const determineBrightness = (state: ClockState): Brightness =>
-	state === 'past' ? 'dim' : 'normal';
+const determineBrightness = (state: ClockState): Brightness => 'normal';
 
 const determineProgress = (state: ClockState, currentTime: Date): number => {
 	if (state === 'past') return 1;
