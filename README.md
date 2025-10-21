@@ -1,38 +1,39 @@
-# sv
+# 24-Hour Visual Time Clock
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+SvelteKit single-page experience that renders 24 minimalist analog clocks in a 6×4 grid to visualize how much of today has elapsed. Past hours dim and freeze, the current hour animates live with discrete second ticks, and future hours sit at noon until their time arrives.
 
-## Creating a project
+## Getting Started
 
-If you're seeing this, you've probably already done this step. Congrats!
-
-```sh
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
+```fish
+pnpm install
+pnpm dev
 ```
 
-## Developing
+Open http://localhost:5173 to view the clock grid. The current hour highlights and advances in real time.
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## Available Scripts
 
-```sh
-npm run dev
+- `pnpm dev` – run the SvelteKit dev server
+- `pnpm check` – run type and Svelte checks
+- `pnpm lint` – prettier check + eslint
+- `pnpm test` – run Vitest + Testing Library (tests located in `tests/`)
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+## Project Structure
 
-## Building
+- `src/lib/components/ClockFace.svelte` – renders a hand-only analog clock
+- `src/lib/stores/dayState.ts` – derives hour states and drives per-second updates
+- `src/lib/time/clockAngles.ts` – calculates frozen/live clock hand angles
+- `src/routes/+page.svelte` – page layout with 24-hour grid
+- `src/app.css` – page styling
 
-To create a production version of your app:
+## Acceptance Checklist (SC-001 – SC-005)
 
-```sh
-npm run build
-```
+Document manual verification steps:
 
-You can preview the production build with `npm run preview`.
+1. **SC-001 current hour recognition** – page header shows “Current time”; current clock card raised.
+2. **SC-002 elapsed count** – header lists “Elapsed hours: N/24”.
+3. **SC-003 update latency** – observe second hand tick; hour transition occurs within 5 seconds after the hour.
+4. **SC-004 load time** – on broadband, grid renders within 2 seconds (verify via browser network tools).
+5. **SC-005 state comprehension** – confirm that dimmed cards + state labels differentiate past/current/future without extra guidance.
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+Record findings in `docs/acceptance.md` if formal validation is required.
