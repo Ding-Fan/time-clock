@@ -40,18 +40,15 @@ export const calculateCurrentAngles = (date: Date): ClockHandAngles => {
 	const minutes = date.getMinutes();
 	const seconds = date.getSeconds();
 
-	// Use cumulative rotation to prevent flicker at 0 seconds
-	// Instead of resetting to 0°, keep incrementing throughout the day
-	const totalSecondsToday = hours * 3600 + minutes * 60 + seconds;
-	const totalMinutesToday = hours * 60 + minutes;
-
 	return {
-		hour:
+		hour: normalize(
 			(hours + minutes / MINUTES_IN_HOUR + seconds / (MINUTES_IN_HOUR * SECONDS_IN_MINUTE)) *
-			DEGREES_PER_HOUR,
-		minute:
-			totalMinutesToday * DEGREES_PER_MINUTE + (seconds / SECONDS_IN_MINUTE) * DEGREES_PER_MINUTE,
-		second: totalSecondsToday * DEGREES_PER_SECOND
+				DEGREES_PER_HOUR
+		),
+		minute: normalize(
+			(minutes + seconds / SECONDS_IN_MINUTE) * DEGREES_PER_MINUTE
+		),
+		second: normalize(seconds * DEGREES_PER_SECOND)
 	};
 };
 

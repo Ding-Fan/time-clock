@@ -6,12 +6,14 @@
 	export let brightness: Brightness = 'normal';
 	export let showSecondHand = true;
 	export let progress = 0;
+	export let secondHandOpacity = 1;
+	export let minuteHandOpacity = 1;
 
 	$: clampedProgress = Math.max(0, Math.min(1, progress));
 </script>
 
 <div
-	class={`clock-face relative block w-[7.5rem] max-w-full aspect-square rounded-full  ${brightness === 'dim' ? 'opacity-35' : ''}`}
+	class={`clock-face relative block w-full h-full aspect-square rounded-full  ${brightness === 'dim' ? 'opacity-35' : ''}`}
 	style={`--elapsed-angle: ${clampedProgress * 360};`}
 	aria-hidden="true"
 >
@@ -23,12 +25,12 @@
 		></span>
 		<span
 			class="clock-face__hand clock-face__hand--minute clock-face__hand--shadow absolute top-1/2 left-1/2 rounded-[10px]"
-			style={`--hand-rotation: ${handAngles.minute}deg;`}
+			style={`--hand-rotation: ${handAngles.minute}deg; opacity: ${minuteHandOpacity};`}
 		></span>
 		{#if showSecondHand}
 			<span
 				class="clock-face__hand clock-face__hand--second clock-face__hand--shadow absolute top-1/2 left-1/2 rounded-[10px]"
-				style={`--hand-rotation: ${handAngles.second}deg;`}
+				style={`--hand-rotation: ${handAngles.second}deg; opacity: ${secondHandOpacity};`}
 			></span>
 		{/if}
 
@@ -39,7 +41,7 @@
 		></span>
 		<span
 			class="clock-face__hand clock-face__hand--minute clock-face__hand--shake absolute top-1/2 left-1/2 rounded-[10px]"
-			style={`--hand-rotation: ${handAngles.minute}deg;`}
+			style={`--hand-rotation: ${handAngles.minute}deg; opacity: ${minuteHandOpacity};`}
 		></span>
 
 		<!-- Big center cap -->
@@ -51,7 +53,7 @@
 		{#if showSecondHand}
 			<span
 				class="clock-face__hand clock-face__hand--second clock-face__hand--shake absolute top-1/2 left-1/2 rounded-[10px]"
-				style={`--hand-rotation: ${handAngles.second}deg;`}
+				style={`--hand-rotation: ${handAngles.second}deg; opacity: ${secondHandOpacity};`}
 			></span>
 		{/if}
 
@@ -111,6 +113,7 @@
 		height: 8px;
 		background: var(--clock-minute-hand, rgb(81, 81, 81));
 		transform: translateY(-50%) rotate(calc(var(--hand-rotation, 0deg) - 90deg));
+		transition: opacity 500ms ease-in;
 	}
 
 	/* Second hand */
@@ -119,6 +122,7 @@
 		height: 2px;
 		background: var(--clock-second-hand, rgb(174, 79, 78));
 		transform: translateY(-50%) rotate(calc(var(--hand-rotation, 0deg) - 90deg));
+		transition: opacity 500ms ease-in;
 	}
 
 	/* Shadow layer for depth effect */

@@ -12,6 +12,8 @@ export type HourClock = {
 	brightness: Brightness;
 	isAnimated: boolean;
 	progress: number;
+	secondHandOpacity: number;
+	minuteHandOpacity: number;
 };
 
 export type DayState = {
@@ -30,13 +32,59 @@ const determineState = (hourIndex: number, currentHourIndex: number): ClockState
 	return 'current';
 };
 
-const determineBrightness = (state: ClockState): Brightness => 'normal';
+const determineBrightness = (_state: ClockState): Brightness => 'normal';
 
 const determineProgress = (state: ClockState, currentTime: Date): number => {
 	if (state === 'past') return 1;
 	if (state === 'future') return 0;
 	const secondsIntoHour = currentTime.getMinutes() * 60 + currentTime.getSeconds();
 	return Math.min(1, Math.max(0, secondsIntoHour / 3600));
+};
+
+// Fade animation constants - must match CSS transition in ClockFace.svelte
+const FADE_DURATION_MS = 500; // Duration of fade-out/fade-in transition
+const SECOND_TRANSITION_START = 59; // Last second of minute
+const MINUTE_TRANSITION_START = 59; // Last minute of hour
+
+const clampOpacity = (value: number): number => Math.max(0, Math.min(1, value));
+
+const calculateSecondHandOpacity = (state: ClockState, currentTime: Date): number => {
+	if (state !== 'current') return 0; // Past/future clocks hide second hand
+
+	const seconds = currentTime.getSeconds();
+	const milliseconds = currentTime.getMilliseconds();
+
+	// Fade out during last 500ms of second 59
+	if (seconds === SECOND_TRANSITION_START && milliseconds >= FADE_DURATION_MS) {
+		return clampOpacity(1 - (milliseconds - FADE_DURATION_MS) / FADE_DURATION_MS); // 1 → 0
+	}
+
+	// Fade in during first 500ms of second 0
+	if (seconds === 0 && milliseconds < FADE_DURATION_MS) {
+		return clampOpacity(milliseconds / FADE_DURATION_MS); // 0 → 1
+	}
+
+	return 1; // Fully visible during seconds 1-58
+};
+
+const calculateMinuteHandOpacity = (state: ClockState, currentTime: Date): number => {
+	if (state !== 'current') return 1; // Past/future clocks show minute hand normally
+
+	const minutes = currentTime.getMinutes();
+	const seconds = currentTime.getSeconds();
+	const milliseconds = currentTime.getMilliseconds();
+
+	// Fade out during last 500ms of minute 59, second 59
+	if (minutes === MINUTE_TRANSITION_START && seconds === SECOND_TRANSITION_START && milliseconds >= FADE_DURATION_MS) {
+		return clampOpacity(1 - (milliseconds - FADE_DURATION_MS) / FADE_DURATION_MS); // 1 → 0
+	}
+
+	// Fade in during first 500ms of minute 0, second 0
+	if (minutes === 0 && seconds === 0 && milliseconds < FADE_DURATION_MS) {
+		return clampOpacity(milliseconds / FADE_DURATION_MS); // 0 → 1
+	}
+
+	return 1; // Fully visible at all other times
 };
 
 const buildHourClock = (
@@ -52,7 +100,9 @@ const buildHourClock = (
 		handAngles: resolveAngles(hourIndex, state, currentTime),
 		brightness: determineBrightness(state),
 		isAnimated: state === 'current',
-		progress: determineProgress(state, currentTime)
+		progress: determineProgress(state, currentTime),
+		secondHandOpacity: calculateSecondHandOpacity(state, currentTime),
+		minuteHandOpacity: calculateMinuteHandOpacity(state, currentTime)
 	};
 };
 
