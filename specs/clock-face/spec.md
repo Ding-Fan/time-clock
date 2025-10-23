@@ -19,6 +19,8 @@ interface ClockFaceProps {
 	brightness?: Brightness; // 'normal' | 'dim' (default: 'normal')
 	showSecondHand?: boolean; // Show/hide second hand (default: true)
 	progress?: number; // 0-1 for conic gradient overlay (default: 0)
+	secondHandOpacity?: number; // 0-1 opacity for second hand (default: 1)
+	minuteHandOpacity?: number; // 0-1 opacity for minute hand (default: 1)
 }
 ```
 
@@ -32,7 +34,14 @@ interface ClockFaceProps {
 	const handAngles: ClockHandAngles = { hour: 90, minute: 180, second: 270 };
 </script>
 
-<ClockFace {handAngles} brightness="normal" showSecondHand={true} progress={0.5} />
+<ClockFace
+	{handAngles}
+	brightness="normal"
+	showSecondHand={true}
+	progress={0.5}
+	secondHandOpacity={1}
+	minuteHandOpacity={1}
+/>
 ```
 
 ## Core Flow
@@ -159,8 +168,33 @@ User views upcoming hour clock at normal brightness with clean white background 
 
 **Transitions**:
 
-- All hands: `all 0.05s cubic-bezier(0, 1.39, 0.7, 1.49)` (shake effect for realistic ticking)
+- All hands (rotation): `all 0.05s cubic-bezier(0, 1.39, 0.7, 1.49)` (shake effect for realistic ticking)
+- Minute hand (opacity): `opacity 500ms ease-in` (fade during hour transitions)
+- Second hand (opacity): `opacity 500ms ease-in` (fade during minute transitions)
 - Progress overlay: `background 0.35s linear`
+
+**Fade Animation Behavior (Cross-Clock Transitions)**:
+
+Prevents visual flickering when clocks transition between states (current → past, future → current) by fading hands out/in during the final/initial moments:
+
+**Second Hand Fade**:
+- **Trigger window**: Every minute transition (XX:59.500 → XX:00.500)
+- **Fade-out**: Last 500ms of second 59 (opacity: 1 → 0)
+- **Fade-in**: First 500ms of second 0 (opacity: 0 → 1)
+- **State visibility**: Only visible on current clock (opacity: 0 on past/future)
+- **Result**: Old clock's second hand disappears before angle reset, new clock's appears smoothly
+
+**Minute Hand Fade**:
+- **Trigger window**: Hour transitions only (XX:59:59.500 → XX:00:00.500)
+- **Fade-out**: Last 500ms of minute 59, second 59 (opacity: 1 → 0)
+- **Fade-in**: First 500ms of minute 0, second 0 (opacity: 0 → 1)
+- **State visibility**: Always visible on all clocks (opacity: 1 on past/future, fades only during transition on current)
+- **Result**: Smooth cross-fade during hour boundaries (e.g., 13:59 → 14:00)
+
+**Hour Hand** (no fade needed):
+- Maximum angle jump: 0.25° at hour transitions (imperceptible)
+- Always visible on current clock (opacity: 1)
+- Hidden on past/future clocks via conditional rendering
 
 **Brightness States**:
 
@@ -185,14 +219,17 @@ User views upcoming hour clock at normal brightness with clean white background 
 - **Transform rotate**: `0deg` = 3 o'clock (right), requires `-90deg` offset for 12 o'clock positioning
 - Clock hands use `rotate(calc(var(--hand-rotation) - 90deg))` to align with clock face
 
-**Cumulative Rotation (Anti-Flicker)**:
+**Normalized Angles with Fade Transitions (Anti-Flicker)**:
 
-- Angles calculated cumulatively from start of day, not normalized to 0-359°
-- Second hand: `totalSecondsToday * 6°` (grows from 0° to 518,400° in 24h)
-- Minute hand: `totalMinutesToday * 6°` (grows from 0° to 8,640° in 24h)
-- Hour hand: Progressive through day based on total time
-- Prevents flicker at 360°→0° transitions (e.g., second hand at :00)
-- CSS `rotate()` handles any degree value, no need for modulo
+- Angles normalized to 0-359° range using modulo operation
+- Second hand: `normalize(seconds * 6°)` - always 0-354°
+- Minute hand: `normalize((minutes + seconds/60) * 6°)` - always 0-354°
+- Hour hand: `normalize((hours + minutes/60 + seconds/3600) * 30°)` - always 0-330°
+- Fade animations mask angle wrap-around during state transitions
+- Minute hand fades out/in during last/first 500ms of hour (59:59.500 → 00:00.500)
+- Second hand fades out/in during last/first 500ms of minute (XX:59.500 → XX:00.500)
+- Hour hand requires no fade (0.25° jump imperceptible)
+- Opacity transitions use `500ms ease-in` timing
 
 **Border Styling**:
 
@@ -216,34 +253,45 @@ User views upcoming hour clock at normal brightness with clean white background 
 
 **Functional**:
 
-- [ ] Accepts `handAngles` and rotates all three hands correctly with -90deg offset
-- [ ] Hands point correctly: 0° input = 12 o'clock (top), 90° input = 3 o'clock (right)
-- [ ] Cumulative rotation prevents flicker at second hand :00 transition
-- [ ] Brightness prop exists but currently unused (all clocks at normal opacity)
-- [ ] showSecondHand conditionally renders second hand (both actual and shadow)
-- [ ] Progress value generates conic gradient from 0-360 degrees starting at 12 o'clock
-- [ ] Progress values outside 0-1 range are clamped
-- [ ] All CSS custom properties apply correctly
+- [x] Accepts `handAngles` and rotates all three hands correctly with -90deg offset
+- [x] Hands point correctly: 0° input = 12 o'clock (top), 90° input = 3 o'clock (right)
+- [x] Normalized angles (0-359°) prevent cumulative rotation buildup
+- [x] Fade animations prevent flicker at state transitions (current → past, future → current)
+- [x] Second hand fades out/in during minute transitions (XX:59.500 → XX:00.500)
+- [x] Minute hand fades out/in during hour transitions (XX:59:59.500 → XX:00:00.500)
+- [x] Second hand hidden on past/future clocks (opacity: 0)
+- [x] Minute hand visible on all clocks (opacity: 1, fades only during transition)
+- [x] Hour hand visible on all clocks (no fade needed)
+- [x] Accepts `secondHandOpacity` and `minuteHandOpacity` props (0-1 range)
+- [x] Brightness prop exists but currently unused (all clocks at normal opacity)
+- [x] showSecondHand conditionally renders second hand (both actual and shadow)
+- [x] Progress value generates conic gradient from 0-360 degrees starting at 12 o'clock
+- [x] Progress values outside 0-1 range are clamped
+- [x] All CSS custom properties apply correctly
 
 **UI/UX**:
 
-- [ ] Clock maintains 1:1 aspect ratio at all viewport sizes
-- [ ] All hands have shake animation (0.05s cubic-bezier bounce)
-- [ ] All clocks maintain normal opacity regardless of brightness prop value
-- [ ] Progress overlay visible, accurate, and starts at 12 o'clock
-- [ ] Two-layer center caps visible (big gray 20px, small red 6px)
-- [ ] Small center cap renders on top of all hands (z-index: 10)
-- [ ] Component size is 7.5rem with max-width 100%
-- [ ] Shadow hands visible and offset correctly for depth effect
+- [x] Clock maintains 1:1 aspect ratio at all viewport sizes
+- [x] All hands have shake animation (0.05s cubic-bezier bounce) for rotation
+- [x] Minute and second hands have smooth fade transitions (500ms ease-in)
+- [x] No visible flickering or jumps during state transitions
+- [x] Fade timing synchronized across old/new current clocks
+- [x] All clocks maintain normal opacity regardless of brightness prop value
+- [x] Progress overlay visible, accurate, and starts at 12 o'clock
+- [x] Two-layer center caps visible (big gray 20px, small red 6px)
+- [x] Small center cap renders on top of all hands (z-index: 10)
+- [x] Component size is 7.5rem with max-width 100%
+- [x] Shadow hands visible and offset correctly for depth effect
 
 **Integration**:
 
-- [ ] Works with ClockHandAngles type from clockAngles.ts (cumulative angles)
-- [ ] Works with Brightness type from dayState.ts
-- [ ] Renders correctly in 4-column grid layout as direct child
-- [ ] No console errors or warnings
-- [ ] Border created with box-shadow works in all modern browsers
-- [ ] Cumulative rotation angles don't cause performance issues
+- [x] Works with ClockHandAngles type from clockAngles.ts (normalized 0-359° angles)
+- [x] Works with Brightness type from dayState.ts
+- [x] Receives opacity values from dayState store (secondHandOpacity, minuteHandOpacity)
+- [x] Renders correctly in 4-column/6-column grid layout as direct child
+- [x] No console errors or warnings
+- [x] Border created with box-shadow works in all modern browsers
+- [x] Normalized angles and fade transitions perform smoothly
 
 ## Future Tiers
 
