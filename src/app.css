@@ -14,6 +14,13 @@
 	--color-text: rgba(0, 0, 0, 0.7);
 	--column-width: 42rem;
 	--column-margin-top: 4rem;
+
+	/* Clock face theming */
+	--clock-face-bg: rgba(255, 255, 255, 0.95);
+	--clock-hour-hand: rgb(81, 81, 81);
+	--clock-minute-hand: rgb(81, 81, 81);
+	--clock-second-hand: rgb(174, 79, 78);
+
 	font-family: var(--font-body);
 	color: var(--color-text);
 }
