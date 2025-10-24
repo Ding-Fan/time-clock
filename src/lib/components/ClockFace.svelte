@@ -10,11 +10,13 @@
 	export let minuteHandOpacity = 1;
 
 	$: clampedProgress = Math.max(0, Math.min(1, progress));
+	// Cap at 359.99deg to avoid conic-gradient wrap-around at 360deg
+	$: elapsedAngle = Math.min(clampedProgress * 360, 359.99);
 </script>
 
 <div
 	class={`clock-face relative block w-full h-full aspect-square rounded-full  ${brightness === 'dim' ? 'opacity-35' : ''}`}
-	style={`--elapsed-angle: ${clampedProgress * 360};`}
+	style={`--elapsed-angle: ${elapsedAngle};`}
 	aria-hidden="true"
 >
 	<div class="clock-face__dial absolute inset-0 z-10">

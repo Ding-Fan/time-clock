@@ -51,20 +51,21 @@ const clampOpacity = (value: number): number => Math.max(0, Math.min(1, value));
 const calculateSecondHandOpacity = (state: ClockState, currentTime: Date): number => {
 	if (state !== 'current') return 0; // Past/future clocks hide second hand
 
+	const minutes = currentTime.getMinutes();
 	const seconds = currentTime.getSeconds();
 	const milliseconds = currentTime.getMilliseconds();
 
-	// Fade out during last 500ms of second 59
-	if (seconds === SECOND_TRANSITION_START && milliseconds >= FADE_DURATION_MS) {
+	// Fade out during last 500ms of minute 59, second 59 (hour transition only)
+	if (minutes === MINUTE_TRANSITION_START && seconds === SECOND_TRANSITION_START && milliseconds >= FADE_DURATION_MS) {
 		return clampOpacity(1 - (milliseconds - FADE_DURATION_MS) / FADE_DURATION_MS); // 1 → 0
 	}
 
-	// Fade in during first 500ms of second 0
-	if (seconds === 0 && milliseconds < FADE_DURATION_MS) {
+	// Fade in during first 500ms of minute 0, second 0 (new hour starts)
+	if (minutes === 0 && seconds === 0 && milliseconds < FADE_DURATION_MS) {
 		return clampOpacity(milliseconds / FADE_DURATION_MS); // 0 → 1
 	}
 
-	return 1; // Fully visible during seconds 1-58
+	return 1; // Fully visible at all other times
 };
 
 const calculateMinuteHandOpacity = (state: ClockState, currentTime: Date): number => {
