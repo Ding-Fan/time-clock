@@ -63,8 +63,21 @@
 		align-items: center;
 		flex: 1;
 		width: 100%;
-		padding: 5rem;
+		padding: 0.75rem;
 		box-sizing: border-box;
+	}
+
+	/* Larger padding on desktop */
+	@media (min-width: 768px) {
+		.page {
+			padding: 2rem;
+		}
+	}
+
+	@media (min-width: 1024px) {
+		.page {
+			padding: 5rem;
+		}
 	}
 
 	/* Dynamic grid sizing - landscape (6×4) */
@@ -73,9 +86,9 @@
 		--rows: 4;
 		--gap-count-x: 5; /* 6 columns = 5 gaps */
 		--gap-count-y: 3; /* 4 rows = 3 gaps */
-		--gap-size: 16px;
-		--page-padding: 5rem; /* Padding around the page */
-		--min-clock-size: 80px;
+		--gap-size: 8px;
+		--page-padding: 0.75rem; /* Padding around the page - matches .page */
+		--min-clock-size: 60px;
 		--max-clock-size: 180px;
 
 		/* Calculate max size from width (subtract horizontal padding) */
@@ -110,6 +123,22 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
+	}
+
+	/* Responsive gap and padding adjustments */
+	@media (min-width: 768px) {
+		.clock-grid {
+			--gap-size: 12px;
+			--page-padding: 2rem;
+		}
+	}
+
+	@media (min-width: 1024px) {
+		.clock-grid {
+			--gap-size: 16px;
+			--page-padding: 5rem;
+			--min-clock-size: 80px;
+		}
 	}
 
 	/* Respect reduced motion preference */

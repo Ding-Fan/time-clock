@@ -37,12 +37,25 @@ Clock size determined by whichever dimension is most constraining:
 - Clamp between 80px (min) and 180px (max)
 ```
 
-**Parameters**:
+**Parameters** (Responsive):
 ```
-Grid gap:       16px
-Page padding:   5rem (80px on all sides)
-Min clock size: 80px
-Max clock size: 180px
+Mobile (<768px):
+  Grid gap:       8px
+  Page padding:   0.75rem (12px on all sides)
+  Min clock size: 60px
+  Max clock size: 180px
+
+Tablet (768px-1023px):
+  Grid gap:       12px
+  Page padding:   2rem (32px on all sides)
+  Min clock size: 60px
+  Max clock size: 180px
+
+Desktop (≥1024px):
+  Grid gap:       16px
+  Page padding:   5rem (80px on all sides)
+  Min clock size: 80px
+  Max clock size: 180px
 ```
 
 **Rationale**:
@@ -150,15 +163,29 @@ User rotates device or resizes browser window causing orientation change. Grid l
 
 main {
   flex: 1;            /* Fill available space */
+  width: 100%;        /* Full width - no max-width constraint */
 }
 
 /* Page container (+page.svelte) */
 .page {
   flex: 1;                    /* Fill parent */
-  padding: 5rem;              /* Generous whitespace */
+  padding: 0.75rem;           /* Mobile-first: minimal padding */
   box-sizing: border-box;
   justify-content: center;    /* Vertical centering */
   align-items: center;        /* Horizontal centering */
+}
+
+/* Responsive padding */
+@media (min-width: 768px) {
+  .page {
+    padding: 2rem;            /* Tablet: moderate padding */
+  }
+}
+
+@media (min-width: 1024px) {
+  .page {
+    padding: 5rem;            /* Desktop: generous whitespace */
+  }
 }
 
 /* Clock card centering */
@@ -176,9 +203,9 @@ main {
   --rows: 4;
   --gap-count-x: 5;           /* 6 columns = 5 gaps */
   --gap-count-y: 3;           /* 4 rows = 3 gaps */
-  --gap-size: 16px;
-  --page-padding: 5rem;       /* Must match .page padding */
-  --min-clock-size: 80px;
+  --gap-size: 8px;            /* Mobile-first: minimal gaps */
+  --page-padding: 0.75rem;    /* Must match .page padding */
+  --min-clock-size: 60px;     /* Smaller on mobile */
   --max-clock-size: 180px;
 
   /* Calculate max size from width */
@@ -206,6 +233,22 @@ main {
   transition: grid-template-columns 0.3s ease, gap 0.3s ease;
 }
 
+/* Responsive gap and padding adjustments */
+@media (min-width: 768px) {
+  .clock-grid {
+    --gap-size: 12px;
+    --page-padding: 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .clock-grid {
+    --gap-size: 16px;
+    --page-padding: 5rem;
+    --min-clock-size: 80px;
+  }
+}
+
 /* Portrait orientation: Update calculations for 4×6 */
 @media (orientation: portrait) {
   .clock-grid {
@@ -230,21 +273,23 @@ main {
 - [x] Portrait layout displays 4 columns × 6 rows
 - [x] Orientation change triggers layout switch
 - [x] No vertical scrollbar appears on desktop (1080p, 1440p, 4K)
+- [x] No horizontal or vertical scrollbar on mobile devices
 - [x] All 24 clocks render in correct order
 - [x] Clock order unchanged between orientations (00-23 left-to-right, top-to-bottom)
 - [x] Dynamic sizing scales with both viewport width and height
-- [x] Clocks clamped between 80px-180px range
+- [x] Clocks clamped between 60px-180px range (mobile: 60px min, desktop: 80px min)
 
 **UI/UX**:
 - [x] Grid centered horizontally and vertically
 - [x] Individual clocks centered within grid cells
-- [x] 5rem (80px) padding around page for whitespace
-- [x] Fixed 16px gap between clocks
+- [x] Responsive padding: 0.75rem (mobile) → 2rem (tablet) → 5rem (desktop)
+- [x] Responsive gaps: 8px (mobile) → 12px (tablet) → 16px (desktop)
 - [x] Smooth transitions on resize (0.3s ease)
 - [x] Respects prefers-reduced-motion
 - [x] Clocks maintain 1:1 aspect ratio
-- [x] Clocks scale proportionally on wide screens (no "too small at 1111px width" issue)
+- [x] Clocks scale proportionally on all screen sizes
 - [x] Works on Chrome, Firefox, Safari, Edge
+- [x] No max-width constraint allows full viewport usage
 
 **Integration**:
 - [x] ClockFace renders correctly at all dynamically calculated sizes
@@ -261,4 +306,7 @@ main {
 
 ---
 
-**Status**: Implemented | **Actual Effort**: 4 hours
+**Status**: Implemented | **Actual Effort**: 4 hours | **Mobile Fix**: +1 hour
+
+**Changelog**:
+- 2025-10-24: Added mobile-responsive padding, gaps, and min-clock-size. Removed max-width constraint from layout to fix scrolling issues on mobile devices.
