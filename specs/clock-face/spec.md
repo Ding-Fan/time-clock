@@ -51,6 +51,8 @@ Props received
   ↓
 Clamp progress (0-1)
   ↓
+Calculate elapsed angle with 360deg wrap-around prevention (cap at 359.99deg)
+  ↓
 Apply CSS custom properties (--hand-rotation, --elapsed-angle)
   ↓
 Render clock face with hands rotated, brightness applied, progress overlay
@@ -168,7 +170,7 @@ User views upcoming hour clock at normal brightness with clean white background 
 
 **Transitions**:
 
-- All hands (rotation): `all 0.05s cubic-bezier(0, 1.39, 0.7, 1.49)` (shake effect for realistic ticking)
+- All hands (rotation): `all 0.08s cubic-bezier(0, 1.8, 0.6, 1.8)` (stronger shake effect for realistic ticking)
 - Minute hand (opacity): `opacity 500ms ease-in` (fade during hour transitions)
 - Second hand (opacity): `opacity 500ms ease-in` (fade during minute transitions)
 - Progress overlay: `background 0.35s linear`
@@ -178,11 +180,12 @@ User views upcoming hour clock at normal brightness with clean white background 
 Prevents visual flickering when clocks transition between states (current → past, future → current) by fading hands out/in during the final/initial moments:
 
 **Second Hand Fade**:
-- **Trigger window**: Every minute transition (XX:59.500 → XX:00.500)
-- **Fade-out**: Last 500ms of second 59 (opacity: 1 → 0)
-- **Fade-in**: First 500ms of second 0 (opacity: 0 → 1)
+- **Trigger window**: Hour transitions only (XX:59:59.500 → XX:00:00.500)
+- **Fade-out**: Last 500ms of minute 59, second 59 (opacity: 1 → 0)
+- **Fade-in**: First 500ms of minute 0, second 0 (opacity: 0 → 1)
 - **State visibility**: Only visible on current clock (opacity: 0 on past/future)
 - **Result**: Old clock's second hand disappears before angle reset, new clock's appears smoothly
+- **Note**: Requires both minute AND second checks to prevent fading at every minute boundary
 
 **Minute Hand Fade**:
 - **Trigger window**: Hour transitions only (XX:59:59.500 → XX:00:00.500)
@@ -205,12 +208,13 @@ Prevents visual flickering when clocks transition between states (current → pa
 **Progress Visualization**:
 
 - Clamped to 0-1 range
-- Converted to 0-360 degrees for conic gradient
+- Converted to degrees with max cap: `min(progress * 360, 359.99)`
+- **360deg cap prevention**: Using exactly 360deg causes conic-gradient wrap-around (360° = 0°), creating a white gap on past clocks. Capped at 359.99deg to ensure full coverage.
 - Gradient starts at 12 o'clock (`from 0deg`), fills clockwise
 - Gray overlay color: `rgba(100, 100, 100, 1.0)` (full opacity medium gray)
 - Overlay inset: 0 (covers entire clock face)
 - Overlay opacity calculated: `clamp(0, angle/360, 1)` fades in as it fills
-- Progress 0 = clean white face, Progress 1 = fully gray face
+- Progress 0 = clean white face, Progress 1 = fully gray face (no white gap)
 - Color chosen to match visual appearance of dimmed past clocks (consistency)
 
 **Coordinate System Notes**:
@@ -272,7 +276,7 @@ Prevents visual flickering when clocks transition between states (current → pa
 **UI/UX**:
 
 - [x] Clock maintains 1:1 aspect ratio at all viewport sizes
-- [x] All hands have shake animation (0.05s cubic-bezier bounce) for rotation
+- [x] All hands have stronger shake animation (0.08s cubic-bezier bounce with 1.8 overshoot) for rotation
 - [x] Minute and second hands have smooth fade transitions (500ms ease-in)
 - [x] No visible flickering or jumps during state transitions
 - [x] Fade timing synchronized across old/new current clocks
@@ -302,3 +306,6 @@ Prevents visual flickering when clocks transition between states (current → pa
 ---
 
 **Status**: Existing Implementation | **Documentation Effort**: 2-3h
+
+**Changelog**:
+- 2025-10-24: Fixed progress overlay 360deg wrap-around bug (capped at 359.99deg) and corrected second hand fade to only trigger during hour transitions (not every minute). Enhanced shake animation strength (0.05s → 0.08s, overshoot 1.4 → 1.8).

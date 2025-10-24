@@ -98,7 +98,7 @@
 
 	/* Shake animation for realistic ticking */
 	.clock-face__hand--shake {
-		transition: all 0.05s cubic-bezier(0, 1.39, 0.7, 1.49);
+		transition: all 0.08s cubic-bezier(0, 1.8, 0.6, 1.8);
 	}
 
 	/* Hour hand */
