@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Header from './Header.svelte';
+	import FullscreenButton from '$lib/components/FullscreenButton.svelte';
 	import '../app.css';
 
 	let { children } = $props();
@@ -11,6 +12,8 @@
 	<main>
 		{@render children()}
 	</main>
+
+	<FullscreenButton />
 </div>
 
 <style>
