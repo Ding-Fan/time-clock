@@ -8,6 +8,16 @@ declare global {
 		// interface PageState {}
 		// interface Platform {}
 	}
+
+	// Fullscreen API vendor-prefixed properties for Safari/WebKit support
+	interface Document {
+		webkitFullscreenElement?: Element;
+		webkitExitFullscreen?: () => Promise<void>;
+	}
+
+	interface HTMLElement {
+		webkitRequestFullscreen?: () => Promise<void>;
+	}
 }
 
 export {};
